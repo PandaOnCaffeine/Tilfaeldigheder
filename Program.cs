@@ -20,28 +20,30 @@ namespace Tilfældigheder
             List<int> rngInts = new List<int>();
 
 
-            RandomTest(100, randomInts);
+            RandomTest(100, randomInts); // run Random Test Method
 
-            randomInts.Sort();
-
+            randomInts.Sort(); // sort the numbers so its easier to read
             foreach (int i in randomInts)
             {
-                Console.WriteLine($"Random number: {i}");
+                Console.WriteLine($"Random number: {i}"); // writes result
             }
 
 
-            RandomNumberGeneratorCreateTest(100, rngInts);
+            RandomNumberGeneratorCreateTest(100, rngInts); // run RNGCryptoServiceProvider Test Method
 
-            rngInts.Sort();
+            rngInts.Sort(); // sort the numbers so its easier to read
             foreach (int i in rngInts)
             {
-                Console.WriteLine($"RNG number: {i}");
+                Console.WriteLine($"RNG number: {i}"); // writes result
             }
 
 
             //
             // Benchmark part of code
             //
+            Console.WriteLine("\n");
+
+
             List<int> randomBenchmarkList = new List<int>();
             List<int> rngBenchmarkList = new List<int>();
 
@@ -50,29 +52,41 @@ namespace Tilfældigheder
 
             Console.WriteLine("Random Benchmark:\n");
 
-            stopwatch.Start();
-            RandomTestBenchmark(randomBenchmarkList);
-            stopwatch.Stop();
-            Console.WriteLine($"Time: {stopwatch.ElapsedMilliseconds}ms");
+            stopwatch.Start(); // starts stopwatch
+            RandomTestBenchmark(randomBenchmarkList); // run benchmark method
+            stopwatch.Stop(); // stops stopwatch
+            Console.WriteLine($"Time: {stopwatch.ElapsedMilliseconds}ms"); // writes how much time it used in milliseconds
 
-            stopwatch.Restart();
+            stopwatch.Restart(); // Restart stopwatch, so it ready for next test
 
             Console.WriteLine("Random Number Generator Benchmark:\n");
 
-            stopwatch.Start();
-            RNGCreateTestBenchmark(rngBenchmarkList);
-            stopwatch.Stop();
-            Console.WriteLine($"Time: {stopwatch.ElapsedMilliseconds}ms");
+            stopwatch.Start(); // starts stopwatch
+            RNGCreateTestBenchmark(rngBenchmarkList); // run benchmark method
+            stopwatch.Stop(); // stops stopwatch
+            Console.WriteLine($"Time: {stopwatch.ElapsedMilliseconds}ms"); // writes how much time it used in milliseconds
+
+            //
+            // Randomness Code from moodle
+            //
+            Console.WriteLine("\n");
 
 
+            // Definer antal test og arraystørrelse
+            int numberOfTests = 10;
+            int arraySize = 4;
+
+            // RNGCryptoServiceProvider tilfældighedstest
+            TestRandomnessWithRNGCryptoServiceProvider(numberOfTests, arraySize);
+
+            // Random tilfældighedstest
+            TestRandomnessWithRandom(numberOfTests, arraySize);
 
 
-
-
-
-            Console.ReadLine();
+            Console.ReadLine(); // to not close
         }
 
+        // Random Test
         static void RandomTest(int amountOfTest, List<int> intList)
         {
             Console.WriteLine("Random Test:\n");
@@ -83,6 +97,7 @@ namespace Tilfældigheder
             }
         }
 
+        // Random 1 million Test for benchmark
         static void RandomTestBenchmark(List<int> intList)
         {
             Random random = new Random();
@@ -92,6 +107,7 @@ namespace Tilfældigheder
             }
         }
 
+        // RNGCryptoServiceProvider Test
         static void RandomNumberGeneratorCreateTest(int amountOfTest, List<int> intList)
         {
             List<byte[]> Test = new List<byte[]>();
@@ -104,16 +120,10 @@ namespace Tilfældigheder
                     rng.GetBytes(randomBytes);
                 }
                 Test.Add(randomBytes);
-                //int randomInt = BitConverter.ToInt32(randomBytes, 0);
-                //randomInt %= 1000;
-                //if (randomInt < 0)
-                //{
-                //    randomInt = randomInt * -1;
-                //}
-                //intList.Add(randomInt);
             }
         }
 
+        // RNGCryptoServiceProvider 1 million test for benchmark
         static void RNGCreateTestBenchmark(List<int> intList)
         {
             for (int i = 0; i < 1000000; i++)
@@ -130,6 +140,40 @@ namespace Tilfældigheder
                     randomInt = randomInt * -1;
                 }
                 intList.Add(randomInt);
+            }
+        }
+
+        // Randomness Code from moodle
+        private static void TestRandomnessWithRNGCryptoServiceProvider(int numberOfTests, int arraySize)
+        {
+            Console.WriteLine("RNGCryptoServiceProvider tilfældighedstest:\n");
+
+            for (int i = 0; i < numberOfTests; i++)
+            {
+                byte[] randomBytes = new byte[arraySize];
+                using (var randomNumberGenerator = RandomNumberGenerator.Create())
+                {
+                    randomNumberGenerator.GetBytes(randomBytes);
+                }
+
+                int randomInt = BitConverter.ToInt32(randomBytes, 0);
+                Console.WriteLine($"Test {i + 1}: {BitConverter.ToString(randomBytes).Replace("-", "")} => {randomInt}");
+            }
+        }
+
+        // Randomness Code from moodle
+        private static void TestRandomnessWithRandom(int numberOfTests, int arraySize)
+        {
+            Console.WriteLine("Random tilfældighedstest:\n");
+
+            Random random = new Random();
+            for (int i = 0; i < numberOfTests; i++)
+            {
+                byte[] randomBytes = new byte[arraySize];
+                random.NextBytes(randomBytes);
+
+                int randomInt = BitConverter.ToInt32(randomBytes, 0);
+                Console.WriteLine($"Test {i + 1}: {BitConverter.ToString(randomBytes).Replace("-", "")} => {randomInt}");
             }
         }
     }
